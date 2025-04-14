@@ -130,7 +130,7 @@ elif n == "5":
             for song in found_songs:
                 print(f'{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}')
         else:
-            print(f"['{s}'에 해당하는 곡이 없습니다.]")
+            print(f"['{s}'에 해당하는 곡이 없어요.]")
     else:
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
 
