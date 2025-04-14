@@ -110,7 +110,7 @@ elif n == "5":
     print(e)
     time.sleep(1)
     s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
-    print(f"['{s}'의 노래를 검색 중이에요...]")
+    print(f"[<{s}>의 노래를 검색 중이에요...]")
     time.sleep(1)
 
     if response.status_code == 200:
@@ -135,4 +135,4 @@ elif n == "5":
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
 
 else:
-  print(f"[<{n}>번에 해당하는 서비스가 없어요. 1~5번 중에 선택해 주세요.]")
+    print(f"[<{n}>번에 해당하는 서비스가 없어요. 1~5번 중에 선택해 주세요.]")
