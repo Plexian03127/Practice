@@ -48,17 +48,7 @@ elif n == "5":
     func.search(s)
 
 elif n == "6":
-    print("<노래 리스트 파일 저장>")
-    time.sleep(1)
-    num_songs = input("[저장할 곡의 수를 입력하세요.(예: 100, 50, 10)]: ")
-    songs = func.fetch(int(num_songs))
-    
-    file_name = input("[저장할 파일 이름을 입력하세요.(예: songs.txt)]: ")
-    with open(file_name, 'w', encoding='utf-8') as f:
-        for song in songs:
-            f.write(f"{song}\n")
-    
-    print(f"[노래 리스트가 {file_name}에 저장되었어요.]")
+    func.save()
 
 else:
     print(f"[<{n}>번에 해당하는 서비스가 없어요. 1~6번 중에 선택해 주세요.]")

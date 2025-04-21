@@ -68,3 +68,16 @@ def search(s):
             print(f"[TOP 100곡 내 <{s}>의 노래가 없어요.]")
     else:
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
+
+def save():
+    print("<노래 리스트 파일 저장>")
+    time.sleep(1)
+    num_songs = input("[저장할 곡의 수를 입력하세요.(예: 100, 50, 10)]: ")
+    songs = fetch(int(num_songs))
+    
+    file_name = input("[저장할 파일 이름을 입력하세요.(예: songs.txt)]: ")
+    with open(file_name, 'w', encoding='utf-8') as f:
+        for song in songs:
+            f.write(f"{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}\n")
+    
+    print(f"[노래 리스트가 {file_name}에 저장되었어요.]")
