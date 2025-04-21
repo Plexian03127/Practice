@@ -33,6 +33,10 @@ def display(songs):
         print(f'{song[0]}위 | 제목: {song[1]} | 아티스트: {song[2]}')
 
 def ai():
+    print("[좋아요! 제가 열심히 찾아서 사용자님께 노래를 한 곡 추천할게요.]")
+    time.sleep(1)
+    print(f"[두구두구둥...]")
+    time.sleep(1)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         songs = soup.select('tr[data-song-no]')
@@ -47,7 +51,10 @@ def ai():
     else:
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
 
-def search(s):
+def search():
+    s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
+    print(f"[<{s}>의 노래를 검색 중이에요...]")
+    time.sleep(1)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         songs = soup.select('tr[data-song-no]')
@@ -70,8 +77,6 @@ def search(s):
         print(f'[웹 페이지를 가져오는 데 실패했어요. T.T | 상태 코드: {response.status_code}]')
 
 def save():
-    print("<노래 리스트 파일 저장>")
-    time.sleep(1)
     num_songs = input("[저장할 곡의 수를 입력하세요.(예: 100, 50, 10)]: ")
     songs = fetch(int(num_songs))
     

@@ -33,21 +33,16 @@ elif n == "3":
 elif n == "4":
     print("<멜론 차트 AI 추천곡>")
     time.sleep(1)
-    print("[좋아요! 제가 열심히 찾아서 사용자님께 노래를 한 곡 추천할게요.]")
-    time.sleep(1)
-    print(f"[두구두구둥...]")
-    time.sleep(1)
     func.ai()
 
 elif n == "5":
     print("<가수 이름 검색>")
     time.sleep(1)
-    s = input("[검색하고 싶은 가수의 이름을 입력하세요.]: ")
-    print(f"[<{s}>의 노래를 검색 중이에요...]")
-    time.sleep(1)
-    func.search(s)
+    func.search()
 
 elif n == "6":
+    print("<노래 리스트 파일 저장>")
+    time.sleep(1)
     func.save()
 
 else:
