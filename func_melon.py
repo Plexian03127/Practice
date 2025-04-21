@@ -5,11 +5,12 @@ import time
 import func
 
 print("==========================")
-print("| 1. 멜론 차트 TOP 100곡 |")
-print("| 2. 멜론 차트 TOP 50곡  |")
-print("| 3. 멜론 차트 TOP 10곡  |")
-print("| 4. 멜론 차트 AI 추천곡 |")
-print("| 5. 가수 이름 검색      |")
+print("| 1. 멜론 차트 TOP 100곡   |")
+print("| 2. 멜론 차트 TOP 50곡    |")
+print("| 3. 멜론 차트 TOP 10곡    |")
+print("| 4. 멜론 차트 AI 추천곡   |")
+print("| 5. 가수 이름 검색        |")
+print("| 6. 노래 리스트 파일 저장 |")
 print("==========================")
 
 n = input("[원하시는 서비스에 해당하는 번호를 입력하세요.]: ")
@@ -46,5 +47,18 @@ elif n == "5":
     time.sleep(1)
     func.search(s)
 
+elif n == "6":
+    print("<노래 리스트 파일 저장>")
+    time.sleep(1)
+    num_songs = input("[저장할 곡의 수를 입력하세요.(예: 100, 50, 10)]: ")
+    songs = func.fetch(int(num_songs))
+    
+    file_name = input("[저장할 파일 이름을 입력하세요.(예: songs.txt)]: ")
+    with open(file_name, 'w', encoding='utf-8') as f:
+        for song in songs:
+            f.write(f"{song}\n")
+    
+    print(f"[노래 리스트가 {file_name}에 저장되었어요.]")
+
 else:
-    print(f"[<{n}>번에 해당하는 서비스가 없어요. 1~5번 중에 선택해 주세요.]")
+    print(f"[<{n}>번에 해당하는 서비스가 없어요. 1~6번 중에 선택해 주세요.]")
