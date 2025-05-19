@@ -4,17 +4,6 @@ import urllib.parse
 import json
 
 def get_blog_search_results(query, client_id, client_secret):
-    """
-    네이버 블로그 검색 API를 호출하여 결과를 가져와 파싱하는 함수
-
-    Args:
-        query (str): 검색어
-        client_id (str): 네이버 API 클라이언트 ID
-        client_secret (str): 네이버 API 클라이언트 Secret
-
-    Returns:
-        list: 추출된 검색 결과 항목들의 리스트. 오류 발생 시 빈 리스트 반환.
-    """
     encText = urllib.parse.quote(query)
     url = "https://openapi.naver.com/v1/search/blog?query=" + encText # JSON 결과
 
