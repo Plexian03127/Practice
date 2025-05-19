@@ -50,3 +50,4 @@ def get_blog_search_results(query, client_id, client_secret):
         extracted_list = []
 
     return extracted_list
+#

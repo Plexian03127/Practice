@@ -20,3 +20,4 @@ def print_blog_results(results):
             print("-" * 20)
     else:
         print("검색 결과가 없습니다.")
+#
