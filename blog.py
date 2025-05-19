@@ -30,4 +30,3 @@ def main():
 # 스크립트가 직접 실행될 때 main 함수 호출
 if __name__ == "__main__":
     main()
-#
