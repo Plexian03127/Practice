@@ -254,3 +254,4 @@ def currency_calculator_menu():
             time.sleep(0.5)
             input("\n> 확인(Enter)")
             fn.clear_terminal()
+        
