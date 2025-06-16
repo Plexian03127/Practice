@@ -1,6 +1,7 @@
 import os, json, time
 import requests
 
+from assign import API_BASE_URL
 from assign import COMMAND_LIST, COMMAND_BACK
 from assign import COUNTRIES, CURRENCY_UNITS, CURRENCY_NAMES
 
@@ -83,32 +84,32 @@ def save_favorites():
 def display_main_menu():
     clear_terminal()
     print("=== 환율 애플리케이션 메뉴 ===")
-    print("|                           |")
-    print("|  1. 환율 조회             |")
-    print("|  2. 환율 계산기           |")
-    print("|  3. 국가 목록 보기        |")
-    print("|  0. 종료                  |")
-    print("|                           |")
+    print("|                            |")
+    print("|  1. 환율 조회              |")
+    print("|  2. 환율 계산기            |")
+    print("|  3. 국가 목록 보기         |")
+    print("|  0. 종료                   |")
+    print("|                            |")
     print("==============================")
 
 def display_exchange_rate_menu():
     clear_terminal()
     print("====== 실시간 환율 조회 ======")
-    print("|                           |")
-    print("|  1. 직접 검색하여 조회    |")
-    print("|  2. 즐겨찾기 통화 조회    |")
-    print("|  3. 즐겨찾기 관리         |")
-    print("|  4. 사용자 통화 설정      |")
-    print("|  0. 뒤로 가기             |")
-    print("|                           |")
+    print("|                            |")
+    print("|  1. 직접 검색하여 조회     |")
+    print("|  2. 즐겨찾기 통화 조회     |")
+    print("|  3. 즐겨찾기 관리          |")
+    print("|  4. 사용자 통화 설정       |")
+    print("|  0. 뒤로 가기              |")
+    print("|                            |")
     print("==============================")
 
 def display_break():
     clear_terminal()
     print("=== 환율 애플리케이션 종료 ===")
-    print("|                           |")
+    print("|                            |")
     print("| 애플리케이션을 종료합니다. |")
-    print("|                           |")
+    print("|                            |")
     print("==============================")
 
 def display_currency_setting_menu(title, current_setting):
@@ -130,11 +131,11 @@ def display_individual_exchange_rate_menu(user_base_currency_name, user_country_
 def display_favorites_management_menu():
     clear_terminal()
     print("======= 즐겨찾기  관리 =======")
-    print("|                           |")
-    print("|  1. 즐겨찾기 추가         |")
-    print("|  2. 즐겨찾기 삭제         |")
-    print("|  0. 뒤로 가기             |")
-    print("|                           |")
+    print("|                            |")
+    print("|  1. 즐겨찾기 추가          |")
+    print("|  2. 즐겨찾기 삭제          |")
+    print("|  0. 뒤로 가기              |")
+    print("|                            |")
     print("==============================")
 
 def display_add_favorite_menu(print_favorites_list_func):
@@ -421,6 +422,6 @@ def lookup_exchange_rate():
             return
         else:
             display_exchange_rate_menu()
-            print("\n❗ 잘못된 선택입니다. 1~4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
+            print("\n❗ 잘못된 선택입니다. 1 ~ 4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
             time.sleep(0.5)
             input("\n> 확인(Enter)")

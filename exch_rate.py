@@ -22,7 +22,7 @@ def main():
             break
         else:
             fn.display_main_menu()
-            print("\n❗ 잘못된 선택입니다. 1 ~ 5 또는 0 중 하나를 입력하세요.")
+            print("\n❗ 잘못된 선택입니다. 1 ~ 3 또는 0 중 하나를 입력하세요.")
             time.sleep(0.5)
             input("\n> 확인(Enter)")
             fn.clear_terminal()

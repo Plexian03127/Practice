@@ -249,7 +249,7 @@ def currency_calculator_menu():
             return
         else:
             display_calculator_main_menu()
-            print("\n❗ 잘못된 선택입니다. 1-4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
+            print("\n❗ 잘못된 선택입니다. 1 ~ 4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
             time.sleep(0.5)
             input("\n> 확인(Enter)")
             fn.clear_terminal()
