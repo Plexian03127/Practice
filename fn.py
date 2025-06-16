@@ -1,7 +1,6 @@
 import os, json, time
 import requests
 
-from assign import API_BASE_URL
 from assign import COMMAND_LIST, COMMAND_BACK
 from assign import COUNTRIES, CURRENCY_UNITS, CURRENCY_NAMES
 
