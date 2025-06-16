@@ -1,7 +1,7 @@
 import os, json, time
 import requests
 
-from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE, COMMAND_INVALID
+from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE
 from assign import COUNTRIES, CURRENCY_UNITS, CURRENCY_NAMES
 
 USER_SETTINGS_FILE = 'user_settings.json'
@@ -11,8 +11,38 @@ API_BASE_URL = "https://open.er-api.com/v6/latest/"
 user_country_setting = None
 currency_favorites = []
 
+if os.name == 'nt':  # Windows
+    import msvcrt
+else:  # Linux / macOS
+    import tty
+    import termios
+
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def getch():
+    while True:
+        char = ''
+        if os.name == 'nt':
+            char_bytes = msvcrt.getch()
+            try:
+                char = char_bytes.decode('cp949') 
+            except UnicodeDecodeError:
+                try:
+                    char = char_bytes.decode('mbcs')
+                except UnicodeDecodeError:
+                    char = char_bytes.decode('utf-8', errors='ignore')
+        else:  # Linux / macOS
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                char = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        
+        if char.isdigit():
+            return char
 
 def find_country_by_input(country_input_lower):
     for continent, countries_in_continent in COUNTRIES.items():
@@ -80,36 +110,26 @@ def save_favorites():
     with open(FAVORITES_FILE, 'w', encoding='utf-8') as f:
         json.dump(currency_favorites, f, ensure_ascii=False, indent=4)
 
-def display_main_menu():
-    clear_terminal()
-    print("=== 환율 애플리케이션 메뉴 ===")
-    print("|                            |")
-    print("|  1. 환율 조회              |")
-    print("|  2. 환율 계산기            |")
-    print("|  3. 국가 목록 보기         |")
-    print("|  0. 종료                   |")
-    print("|                            |")
-    print("==============================")
-
 def display_exchange_rate_menu():
     clear_terminal()
-    print("====== 실시간 환율 조회 ======")
+    print("========= 환율  조회 =========")
     print("|                            |")
-    print("|  1. 직접 검색하여 조회     |")
-    print("|  2. 즐겨찾기 통화 조회     |")
-    print("|  3. 즐겨찾기 관리          |")
-    print("|  4. 사용자 통화 설정       |")
+    print("|  1. 실시간 환율 조회       |")
+    print("|  2. 즐겨찾기 통화 관리     |")
+    print("|  3. 사용자 통화 설정       |")
     print("|  0. 뒤로 가기              |")
     print("|                            |")
     print("==============================")
 
-def display_break():
+def display_exchange_rate_check_menu():
     clear_terminal()
-    print("=== 환율 애플리케이션 종료 ===")
+    print("====== 실시간 환율 조회 ======")
     print("|                            |")
-    print("| 애플리케이션을 종료합니다. |")
+    print("|  1. 직접 검색하여 조회     |")
+    print("|  2. 즐겨찾기 환율 조회     |")
+    print("|  0. 뒤로 가기              |")
     print("|                            |")
-    print("==============================")
+    print("==============================")    
 
 def display_currency_setting_menu(title, current_setting):
     clear_terminal()
@@ -123,28 +143,28 @@ def display_currency_setting_menu(title, current_setting):
 
 def display_individual_exchange_rate_menu(user_base_currency_name, user_country_setting, user_base_currency):
     clear_terminal()
-    print("======= 개별 환율 조회 =======")
+    print("===== 직접 검색하여 조회 =====")
     print(f"\n현재 사용자 통화: {user_base_currency_name}({user_country_setting['display_name']}/{user_base_currency})")
     print("\n==============================")
 
 def display_favorites_management_menu():
     clear_terminal()
-    print("======= 즐겨찾기  관리 =======")
+    print("===== 즐겨찾기 통화 관리 =====")
     print("|                            |")
-    print("|  1. 즐겨찾기 추가          |")
-    print("|  2. 즐겨찾기 삭제          |")
+    print("|  1. 즐겨찾기 통화 추가     |")
+    print("|  2. 즐겨찾기 통화 삭제     |")
     print("|  0. 뒤로 가기              |")
     print("|                            |")
     print("==============================")
 
 def display_add_favorite_menu(print_favorites_list_func):
     clear_terminal()
-    print("======= 즐겨찾기  추가 =======")
+    print("===== 즐겨찾기 통화 추가 =====")
     print_favorites_list_func()
 
 def display_delete_favorite_menu(print_favorites_list_func):
     clear_terminal()
-    print("======= 즐겨찾기  삭제 =======")
+    print("===== 즐겨찾기 통화 삭제 =====")
     print_favorites_list_func()
 
 def display_country_info():
@@ -167,7 +187,8 @@ def display_country_info():
         time.sleep(0.125)
     print("==============================")
     time.sleep(0.125)
-    input("\n> 확인(Enter)")
+    print("\n계속하려면 아무 숫자 키나 누르세요.")
+    char = getch()
 
 def print_favorites_list(title="현재 즐겨찾기에 등록된 통화"):
     print(f"\n# {title} #\n")
@@ -176,7 +197,7 @@ def print_favorites_list(title="현재 즐겨찾기에 등록된 통화"):
         print(f"{i+1}. {fav['display_name']}({currency_name}/{fav['currency_code']})")
     print("\n==============================")
 
-def set_user_country():
+def set_user_currency():
     global user_country_setting
     while True:
         clear_terminal()
@@ -188,7 +209,7 @@ def set_user_country():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(", ".join(COMMAND_CHOICE))
+        print("".join(COMMAND_CHOICE))
         time.sleep(0.125)
         country_input = input("\n> ").strip()
         if country_input.lower() in COMMAND_LIST:
@@ -211,36 +232,64 @@ def set_user_country():
             save_user_setting()
             print(f"\n✅ 사용자 통화가 '{user_currency_name}'(으)로 설정되었습니다.({user_country_setting['display_name']}/{user_country_setting['currency_code']})")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            break
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char:
+                break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
 
 def manage_favorites():
     while True:
         display_favorites_management_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.125)
-        choice = input("\n> ").strip()
-        if choice == '1':
+        char = getch()
+        if char.lower().lower() == '1':
             add_to_favorites()
-        elif choice == '2':
+        elif char.lower() == '2':
             remove_from_favorites()
-        elif choice in COMMAND_BACK or choice == '0':
+        elif char.lower() == '0':
             return
         else:
             display_favorites_management_menu()
-            print(f"\n❗ 잘못된 선택입니다. 1, 2 {COMMAND_INVALID}")
-            time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n❗ 잘못된 선택입니다. 1, 2 또는 0 중 하나를 선택하세요.")
+            start_time = time.time()
+            re_input_char = None
+            while time.time() - start_time < 2:
+                if os.name == 'nt' and msvcrt.kbhit(): # Windows
+                    re_input_char = msvcrt.getch().decode('utf-8')
+                    break
+                elif os.name != 'nt': # Linux/macOS
+                    fd = sys.stdin.fileno()
+                    old_settings = termios.tcgetattr(fd)
+                    try:
+                        tty.setraw(sys.stdin.fileno())
+                        if sys.stdin in sys.stdin.select([sys.stdin], [], [], 0.01)[0]:
+                            re_input_char = sys.stdin.read(1)
+                            break
+                    finally:
+                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                time.sleep(0.05)
+            if re_input_char:
+                if re_input_char.lower() == '1':
+                    add_to_favorites()
+                elif re_input_char.lower() == '2':
+                    remove_from_favorites()
+                elif re_input_char.lower() == '0':
+                    return
+                else:
+                    continue
+            else:
+                clear_terminal()
 
 def add_to_favorites():
     while True:
         display_add_favorite_menu(print_favorites_list)
         print("\n즐겨찾기에 추가할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(", ".join(COMMAND_CHOICE))
+        print("".join(COMMAND_CHOICE))
         time.sleep(0.125)
         country_input = input("\n> ").strip()
         if country_input.lower() in COMMAND_LIST:
@@ -257,27 +306,31 @@ def add_to_favorites():
                 currency_name = CURRENCY_NAMES.get(found_country_info['currency_code'], "알 수 없는 통화")
                 print(f"\n✅ '{found_country_info['display_name']}'({currency_name}/{found_country_info['currency_code']})이(가) 즐겨찾기에 추가되었습니다.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
             else:
                 currency_name = CURRENCY_NAMES.get(found_country_info['currency_code'], "알 수 없는 통화")
                 print(f"\n❗ '{found_country_info['display_name']}'({currency_name}/{found_country_info['currency_code']})은(는) 이미 즐겨찾기에 있습니다.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요...")
+            char = getch()
 
 def remove_from_favorites():
     while True:
         clear_terminal()
-        print("======= 즐겨찾기  삭제 =======")
+        print("===== 즐겨찾기 통화 삭제 =====")
         if not currency_favorites:
             print("\n삭제할 즐겨찾기 통화가 없습니다.")
             print("\n==============================")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            return
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: return
         print_favorites_list()
         print("\n삭제할 통화에 해당하는 번호를 입력하세요.")
         print(f"({COMMAND_CHOICE[1]}")
@@ -294,26 +347,73 @@ def remove_from_favorites():
                 currency_name = CURRENCY_NAMES.get(removed_fav['currency_code'], "알 수 없는 통화")
                 print(f"\n✅ '{removed_fav['display_name']}'({currency_name}/{removed_fav['currency_code']})이(가) 즐겨찾기에서 삭제되었습니다.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
             else:
                 display_delete_favorite_menu(print_favorites_list)
                 print("\n❗ 유효하지 않은 번호입니다. 다시 입력해 주세요.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
         except ValueError:
             display_delete_favorite_menu(print_favorites_list)
             print("\n❗ 유효하지 않은 입력입니다. 번호를 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
 
-def lookup_single_currency_rate():
+def lookup_real_time_exchange_rate():
+        while True:
+            display_exchange_rate_check_menu()
+            print("\n메뉴를 선택하세요.(번호 입력)")
+            char = getch()
+            if char.lower() == '1':
+                lookup_single_exchange_rate()
+            elif char.lower() == '2':
+                lookup_favorites_exchange_rates()
+            elif char.lower() == '0':
+                return
+            else:
+                display_exchange_rate_check_menu()
+                print("\n❗ 잘못된 선택입니다. 1, 2 또는 0 중 하나를 선택하세요.")
+                start_time = time.time()
+                re_input_char = None
+                while time.time() - start_time < 2:
+                    if os.name == 'nt' and msvcrt.kbhit(): # Windows
+                        re_input_char = msvcrt.getch().decode('utf-8')
+                        break
+                    elif os.name != 'nt': # Linux/macOS
+                        fd = sys.stdin.fileno()
+                        old_settings = termios.tcgetattr(fd)
+                        try:
+                            tty.setraw(sys.stdin.fileno())
+                            if sys.stdin in sys.stdin.select([sys.stdin], [], [], 0.01)[0]:
+                                re_input_char = sys.stdin.read(1)
+                                break
+                        finally:
+                            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                    time.sleep(0.05)
+                if re_input_char:
+                    if re_input_char.lower() == '1':
+                        lookup_single_exchange_rate()
+                    elif re_input_char.lower() == '2':
+                        lookup_favorites_exchange_rates()
+                    elif re_input_char.lower() == '0':
+                        return
+                    else:
+                        continue
+                else:
+                    clear_terminal()
+
+def lookup_single_exchange_rate():
     global user_country_setting
     if user_country_setting is None:
         display_exchange_rate_menu()
         print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
         time.sleep(0.125)
-        input("\n> 확인(Enter)")
-        return
+        print("\n계속하려면 아무 숫자 키나 누르세요.")
+        char = getch()
+        if char: return
 
     user_base_currency = user_country_setting['currency_code']
     user_base_currency_name = CURRENCY_NAMES.get(user_base_currency, "알 수 없는 통화")
@@ -321,7 +421,7 @@ def lookup_single_currency_rate():
     while True:
         display_individual_exchange_rate_menu(user_base_currency_name, user_country_setting, user_base_currency)
         print("\n조회할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(", ".join(COMMAND_CHOICE))
+        print("".join(COMMAND_CHOICE))
         time.sleep(0.125)
         target_country_input = input("\n> ").strip()
         if target_country_input.lower() in COMMAND_LIST:
@@ -340,24 +440,27 @@ def lookup_single_currency_rate():
             if target_currency == user_base_currency:
                 print("\n❗ 동일한 통화는 조회할 수 없습니다.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
-                continue
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
+                if char: continue
             rate_from_target_to_user = get_exchange_rate(target_currency, user_base_currency)
             if rate_from_target_to_user is not None:
                 unit_target = CURRENCY_UNITS.get(target_currency, 1)
                 display_value = rate_from_target_to_user * unit_target
                 clear_terminal()
-                print("======= 개별 환율 조회 =======")
+                print("===== 직접 검색하여 조회 =====")
                 print(f"\n{unit_target} {target_currency_name}({target_country_display_name}/{target_currency}) = {display_value:.2f} {user_base_currency_name}({user_country_setting['display_name']}/{user_base_currency})")
             else:
                 print(f"\n⚠️ '{target_country_display_name}'({target_currency})에서 '{user_country_setting['display_name']}'({user_base_currency})(으)로의 환율 정보를 가져올 수 없습니다. 통화 코드 또는 API 응답을 확인해 주세요.")
             print("\n==============================")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
 
 def lookup_favorites_exchange_rates():
     global user_country_setting
@@ -365,8 +468,9 @@ def lookup_favorites_exchange_rates():
         display_exchange_rate_menu()
         print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
         time.sleep(0.125)
-        input("\n> 확인(Enter)")
-        return
+        print("\n계속하려면 아무 숫자 키나 누르세요.")
+        char = getch()
+        if char: return
 
     user_base_currency = user_country_setting['currency_code']
     user_base_currency_name = CURRENCY_NAMES.get(user_base_currency, "알 수 없는 통화")
@@ -376,11 +480,12 @@ def lookup_favorites_exchange_rates():
         print("===== 즐겨찾기 환율 조회 =====\n")
         if not currency_favorites:
             print(" 즐겨찾기에 등록된 통화가 없습니다.")
-            print("'즐겨찾기 관리' 메뉴에서 추가해 주세요.")
+            print("'즐겨찾기 통화 관리' 메뉴에서 통화를 추가해 주세요.")
             print("\n==============================")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            return
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: return
         print(f"기준 통화: {user_base_currency_name}({user_country_setting['display_name']}/{user_base_currency})\n")
         all_rates_fetched = True
         for fav in currency_favorites:
@@ -388,7 +493,7 @@ def lookup_favorites_exchange_rates():
             target_country_display_name = fav['display_name']
             target_currency_name = CURRENCY_NAMES.get(target_currency, "알 수 없는 통화")
             if target_currency == user_base_currency:
-                print(f"{target_currency_name}({target_country_display_name}/{target_currency}) = 기준 통화와 동일")
+                print(f"{unit_target} {target_currency_name}({target_country_display_name}/{target_currency}) = 기준 통화와 동일")
                 continue
             rate_from_target_to_user = get_exchange_rate(target_currency, user_base_currency)
             if rate_from_target_to_user is not None:
@@ -400,27 +505,53 @@ def lookup_favorites_exchange_rates():
                 all_rates_fetched = False
         print("\n==============================")
         time.sleep(0.125)
-        input("\n> 확인(Enter)")
-        return
+        print("\n계속하려면 아무 숫자 키나 누르세요.")
+        char = getch()
+        if char: return
 
 def lookup_exchange_rate():
     while True:
         display_exchange_rate_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.125)
-        choice = input("\n> ").strip()
-        if choice == '1':
-            lookup_single_currency_rate()
-        elif choice == '2':
-            lookup_favorites_exchange_rates()
-        elif choice == '3':
+        char = getch()
+        if char.lower() == '1':
+            lookup_real_time_exchange_rate()
+        elif char.lower() == '2':
             manage_favorites()
-        elif choice == '4':
-            set_user_country()
-        elif choice in COMMAND_BACK or choice == '0':
+        elif char.lower() == '3':
+            set_user_currency()
+        elif char.lower() == '0':
             return
         else:
             display_exchange_rate_menu()
-            print(f"\n❗ 잘못된 선택입니다. 1 ~ 4 {COMMAND_INVALID}")
-            time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n❗ 잘못된 선택입니다. 1 ~ 3 또는 0 중 하나를 선택하세요.")
+            start_time = time.time()
+            re_input_char = None
+            while time.time() - start_time < 2:
+                if os.name == 'nt' and msvcrt.kbhit(): # Windows
+                    re_input_char = msvcrt.getch().decode('utf-8')
+                    break
+                elif os.name != 'nt': # Linux/macOS
+                    fd = sys.stdin.fileno()
+                    old_settings = termios.tcgetattr(fd)
+                    try:
+                        tty.setraw(sys.stdin.fileno())
+                        if sys.stdin in sys.stdin.select([sys.stdin], [], [], 0.01)[0]:
+                            re_input_char = sys.stdin.read(1)
+                            break
+                    finally:
+                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                time.sleep(0.05)
+            if re_input_char:
+                if re_input_char.lower() == '1':
+                    lookup_real_time_exchange_rate()
+                elif re_input_char.lower() == '2':
+                    manage_favorites()
+                elif re_input_char.lower() == '3':
+                    set_user_currency()
+                elif re_input_char.lower() == '0':
+                    return
+                else:
+                    continue
+            else:
+                clear_terminal()

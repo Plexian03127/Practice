@@ -1,7 +1,6 @@
 COMMAND_LIST = ['list', '?']
 COMMAND_BACK = ['back', '/']
 COMMAND_CHOICE = ["(국가 목록 보기: 'list' 또는 '?' 입력 | ", "뒤로 가기: 'back' 또는 '/' 입력)"]
-COMMAND_INVALID = ("또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
 
 COUNTRIES = {
     '아시아': {

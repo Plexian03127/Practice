@@ -1,7 +1,7 @@
-import time
+import os, time
 import fn
 
-from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE, COMMAND_INVALID
+from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE
 from assign import CURRENCY_NAMES
 
 HISTORY_FILE = 'calculation_history.json'
@@ -9,6 +9,36 @@ HISTORY_FILE = 'calculation_history.json'
 calculator_base_currency_setting = fn.find_country_by_input('미국')
 calculator_target_currency_setting = fn.find_country_by_input('한국')
 calculation_history = []
+
+if os.name == 'nt':  # Windows
+    import msvcrt
+else:  # Linux / macOS
+    import tty
+    import termios
+
+def getch():
+    while True:
+        char = ''
+        if os.name == 'nt':
+            char_bytes = msvcrt.getch()
+            try:
+                char = char_bytes.decode('cp949') 
+            except UnicodeDecodeError:
+                try:
+                    char = char_bytes.decode('mbcs')
+                except UnicodeDecodeError:
+                    char = char_bytes.decode('utf-8', errors='ignore')
+        else:  # Linux / macOS
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                char = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        
+        if char.isdigit():
+            return char
 
 def display_calculator_main_menu():
     fn.clear_terminal()
@@ -35,7 +65,7 @@ def set_calculator_base_currency():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n기준이 될 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(", ".join(COMMAND_CHOICE))
+        print("".join(COMMAND_CHOICE))
         time.sleep(0.125)
         country_input = input("\n> ").strip()
 
@@ -71,12 +101,14 @@ def set_calculator_base_currency():
             if message:
                 print(message)
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            break
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
 
 def set_calculator_target_currency():
     global calculator_base_currency_setting, calculator_target_currency_setting
@@ -91,7 +123,7 @@ def set_calculator_target_currency():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n환산할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(", ".join(COMMAND_CHOICE))
+        print("".join(COMMAND_CHOICE))
         time.sleep(0.125)
         country_input = input("\n> ").strip()
 
@@ -127,12 +159,14 @@ def set_calculator_target_currency():
             if message:
                 print(message)
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            break
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
 
 def perform_currency_calculation():
     global calculation_history
@@ -141,8 +175,9 @@ def perform_currency_calculation():
         display_calculator_main_menu()
         print("\n❗ 기준 통화와 환산할 통화를 먼저 설정해 주세요.")
         time.sleep(0.125)
-        input("\n> 확인(Enter)")
-        return
+        print("\n계속하려면 아무 숫자 키나 누르세요.")
+        char = getch()
+        if char: return
 
     base_currency_code = calculator_base_currency_setting['currency_code']
     target_currency_code = calculator_target_currency_setting['currency_code']
@@ -173,8 +208,9 @@ def perform_currency_calculation():
                 print("\n==============================")
                 print("\n❗ 금액은 음수가 될 수 없습니다. 다시 입력해 주세요.")
                 time.sleep(0.125)
-                input("\n> 확인(Enter)")
-                continue
+                print("\n계속하려면 아무 숫자 키나 누르세요.")
+                char = getch()
+                if char: continue
         except ValueError:
             fn.clear_terminal()
             print("========= 환율  계산 =========")
@@ -183,8 +219,9 @@ def perform_currency_calculation():
             print("\n==============================")
             print("\n❗ 유효하지 않은 금액입니다. 숫자를 입력해 주세요.")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            continue
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: continue
 
         if base_currency_code == target_currency_code:
             fn.clear_terminal()
@@ -192,8 +229,9 @@ def perform_currency_calculation():
             print(f"\n기준 통화와 환산할 통화가 동일합니다: {amount:.2f} {base_currency_name}({base_currency_code})")
             print("\n==============================")
             time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            continue
+            print("\n계속하려면 아무 숫자 키나 누르세요.")
+            char = getch()
+            if char: continue
 
         exchange_rate = fn.get_exchange_rate(base_currency_code, target_currency_code)
 
@@ -224,7 +262,8 @@ def perform_currency_calculation():
             print(f"\n⚠️ '{base_currency_code}'에서 '{target_currency_code}'(으)로의 환율 정보를 가져올 수 없습니다.")
             print("\n==============================")
         time.sleep(0.125)
-        input("\n> 확인(Enter)")
+        print("\n계속하려면 아무 숫자 키나 누르세요.")
+        char = getch()
 
 def display_calculation_history():
     fn.clear_terminal()
@@ -240,28 +279,56 @@ def display_calculation_history():
             time.sleep(0.015625)
     print("\n==============================")
     time.sleep(0.125)
-    input("\n> 확인(Enter)")
+    print("\n계속하려면 아무 숫자 키나 누르세요.")
+    char = getch()
 
 def currency_calculator_menu():
     while True:
         display_calculator_main_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.125)
-        choice = input("\n> ").strip()
-
-        if choice == '1':
+        char = getch()
+        if char.lower() == '1':
             set_calculator_base_currency()
-        elif choice == '2':
+        elif char.lower() == '2':
             set_calculator_target_currency()
-        elif choice == '3':
+        elif char.lower() == '3':
             perform_currency_calculation()
-        elif choice == '4':
+        elif char.lower() == '4':
             display_calculation_history()
-        elif choice in COMMAND_BACK or choice == '0':
+        elif char.lower() == '0':
             return
         else:
             display_calculator_main_menu()
-            print(f"\n❗ 잘못된 선택입니다. 1 ~ 4 {COMMAND_INVALID}")
-            time.sleep(0.125)
-            input("\n> 확인(Enter)")
-            fn.clear_terminal()
+            print(f"\n❗ 잘못된 선택입니다. 1 ~ 4 또는 0 중 하나를 선택하세요.")
+            start_time = time.time()
+            re_input_char = None
+            while time.time() - start_time < 2:
+                if os.name == 'nt' and msvcrt.kbhit(): # Windows
+                    re_input_char = msvcrt.getch().decode('utf-8')
+                    break
+                elif os.name != 'nt': # Linux/macOS
+                    fd = sys.stdin.fileno()
+                    old_settings = termios.tcgetattr(fd)
+                    try:
+                        tty.setraw(sys.stdin.fileno())
+                        if sys.stdin in sys.stdin.select([sys.stdin], [], [], 0.01)[0]:
+                            re_input_char = sys.stdin.read(1)
+                            break
+                    finally:
+                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                time.sleep(0.05)
+            if re_input_char:
+                if re_input_char.lower() == '1':
+                    set_calculator_base_currency()
+                elif re_input_char.lower() == '2':
+                    set_calculator_target_currency()
+                elif re_input_char.lower() == '3':
+                    perform_currency_calculation()
+                elif re_input_char.lower() == '4':
+                    display_calculation_history()
+                elif re_input_char.lower() == '0':
+                    return
+                else:
+                    continue
+            else:
+                fn.clear_terminal()
