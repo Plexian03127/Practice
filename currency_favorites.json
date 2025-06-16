@@ -1,0 +1,18 @@
+[
+    {
+        "display_name": "한국",
+        "currency_code": "KRW"
+    },
+    {
+        "display_name": "일본",
+        "currency_code": "JPY"
+    },
+    {
+        "display_name": "중국",
+        "currency_code": "CNY"
+    },
+    {
+        "display_name": "미국",
+        "currency_code": "USD"
+    }
+]

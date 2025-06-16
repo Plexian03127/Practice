@@ -228,6 +228,7 @@ def display_calculation_history():
             print(f"  → {record['converted_amount']:.2f} {record['target_currency_name']}({record['target_currency_display']}/{record['target_currency_code']})")
             print(f"    (환율: {record['exchange_rate']:.6f})")
     print("\n==============================")
+    time.sleep(0.5)
     input("\n> 확인(Enter)")
 
 def currency_calculator_menu():
