@@ -1,7 +1,7 @@
 import time
 import fn
 
-from assign import COMMAND_LIST, COMMAND_BACK
+from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE, COMMAND_INVALID
 from assign import CURRENCY_NAMES
 
 HISTORY_FILE = 'calculation_history.json'
@@ -35,8 +35,8 @@ def set_calculator_base_currency():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n기준이 될 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(f"(국가 목록 보기: '{COMMAND_LIST[0]}' 또는 '{COMMAND_LIST[1]}' 입력 | 뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(", ".join(COMMAND_CHOICE))
+        time.sleep(0.125)
         country_input = input("\n> ").strip()
 
         if country_input.lower() in COMMAND_LIST:
@@ -70,12 +70,12 @@ def set_calculator_base_currency():
             print(f"\n✅ 기준 통화가 '{currency_name}'(으)로 설정되었습니다.({calculator_base_currency_setting['display_name']}/{calculator_base_currency_setting['currency_code']})")
             if message:
                 print(message)
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def set_calculator_target_currency():
@@ -91,8 +91,8 @@ def set_calculator_target_currency():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n환산할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(f"(국가 목록 보기: '{COMMAND_LIST[0]}' 또는 '{COMMAND_LIST[1]}' 입력 | 뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(", ".join(COMMAND_CHOICE))
+        time.sleep(0.125)
         country_input = input("\n> ").strip()
 
         if country_input.lower() in COMMAND_LIST:
@@ -126,12 +126,12 @@ def set_calculator_target_currency():
             print(f"\n✅ 환산할 통화가 '{currency_name}'(으)로 설정되었습니다.({calculator_target_currency_setting['display_name']}/{calculator_target_currency_setting['currency_code']})")
             if message:
                 print(message)
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def perform_currency_calculation():
@@ -140,7 +140,7 @@ def perform_currency_calculation():
         fn.clear_terminal()
         display_calculator_main_menu()
         print("\n❗ 기준 통화와 환산할 통화를 먼저 설정해 주세요.")
-        time.sleep(0.5)
+        time.sleep(0.125)
         input("\n> 확인(Enter)")
         return
 
@@ -156,8 +156,8 @@ def perform_currency_calculation():
         print(f"\n기준 통화: {base_currency_name}({calculator_base_currency_setting['display_name']}/{base_currency_code})")
         print(f"환산 통화: {target_currency_name}({calculator_target_currency_setting['display_name']}/{target_currency_code})")
         print("\n==============================")
-        print("\n환산할 금액을 입력하세요.(뒤로 가기: 'back' 또는 '/' 입력)")
-        time.sleep(0.25)
+        print(f"\n환산할 금액을 입력하세요.({COMMAND_CHOICE[1]}")
+        time.sleep(0.125)
         amount_input = input("\n> ").strip()
 
         if amount_input.lower() in COMMAND_BACK:
@@ -166,13 +166,23 @@ def perform_currency_calculation():
         try:
             amount = float(amount_input)
             if amount < 0:
+                fn.clear_terminal()
+                print("========= 환율  계산 =========")
+                print(f"\n기준 통화: {base_currency_name}({calculator_base_currency_setting['display_name']}/{base_currency_code})")
+                print(f"환산 통화: {target_currency_name}({calculator_target_currency_setting['display_name']}/{target_currency_code})")
+                print("\n==============================")
                 print("\n❗ 금액은 음수가 될 수 없습니다. 다시 입력해 주세요.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
                 continue
         except ValueError:
+            fn.clear_terminal()
+            print("========= 환율  계산 =========")
+            print(f"\n기준 통화: {base_currency_name}({calculator_base_currency_setting['display_name']}/{base_currency_code})")
+            print(f"환산 통화: {target_currency_name}({calculator_target_currency_setting['display_name']}/{target_currency_code})")
+            print("\n==============================")
             print("\n❗ 유효하지 않은 금액입니다. 숫자를 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             continue
 
@@ -181,7 +191,7 @@ def perform_currency_calculation():
             print("========= 환율  계산 =========")
             print(f"\n기준 통화와 환산할 통화가 동일합니다: {amount:.2f} {base_currency_name}({base_currency_code})")
             print("\n==============================")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             continue
 
@@ -213,7 +223,7 @@ def perform_currency_calculation():
             print("========= 환율  계산 =========")
             print(f"\n⚠️ '{base_currency_code}'에서 '{target_currency_code}'(으)로의 환율 정보를 가져올 수 없습니다.")
             print("\n==============================")
-        time.sleep(0.5)
+        time.sleep(0.125)
         input("\n> 확인(Enter)")
 
 def display_calculation_history():
@@ -227,15 +237,16 @@ def display_calculation_history():
             print(f"    {record['input_amount']:.2f} {record['base_currency_name']}({record['base_currency_display']}/{record['base_currency_code']})")
             print(f"  → {record['converted_amount']:.2f} {record['target_currency_name']}({record['target_currency_display']}/{record['target_currency_code']})")
             print(f"    (환율: {record['exchange_rate']:.6f})")
+            time.sleep(0.015625)
     print("\n==============================")
-    time.sleep(0.5)
+    time.sleep(0.125)
     input("\n> 확인(Enter)")
 
 def currency_calculator_menu():
     while True:
         display_calculator_main_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.25)
+        time.sleep(0.125)
         choice = input("\n> ").strip()
 
         if choice == '1':
@@ -250,7 +261,7 @@ def currency_calculator_menu():
             return
         else:
             display_calculator_main_menu()
-            print("\n❗ 잘못된 선택입니다. 1 ~ 4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
-            time.sleep(0.5)
+            print(f"\n❗ 잘못된 선택입니다. 1 ~ 4 {COMMAND_INVALID}")
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             fn.clear_terminal()

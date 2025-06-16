@@ -1,7 +1,7 @@
 import os, json, time
 import requests
 
-from assign import COMMAND_LIST, COMMAND_BACK
+from assign import COMMAND_LIST, COMMAND_BACK, COMMAND_CHOICE, COMMAND_INVALID
 from assign import COUNTRIES, CURRENCY_UNITS, CURRENCY_NAMES
 
 USER_SETTINGS_FILE = 'user_settings.json'
@@ -161,12 +161,12 @@ def display_country_info():
             currency_code = country_info['통화코드']
             currency_name = CURRENCY_NAMES.get(currency_code, "알 수 없는 통화")
             print(f"{counter}. {country_korean_name} | {currency_name} | {currency_code}")
-            time.sleep(0.015625)
             counter += 1
+            time.sleep(0.015625)
         print()
         time.sleep(0.125)
     print("==============================")
-    time.sleep(0.5)
+    time.sleep(0.125)
     input("\n> 확인(Enter)")
 
 def print_favorites_list(title="현재 즐겨찾기에 등록된 통화"):
@@ -188,8 +188,8 @@ def set_user_country():
             print("\n현재 설정된 통화가 없습니다.")
         print("\n==============================")
         print("\n발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(f"(국가 목록 보기: '{COMMAND_LIST[0]}' 또는 '{COMMAND_LIST[1]}' 입력 | 뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(", ".join(COMMAND_CHOICE))
+        time.sleep(0.125)
         country_input = input("\n> ").strip()
         if country_input.lower() in COMMAND_LIST:
             display_country_info()
@@ -210,19 +210,19 @@ def set_user_country():
             user_country_setting = found_country_info
             save_user_setting()
             print(f"\n✅ 사용자 통화가 '{user_currency_name}'(으)로 설정되었습니다.({user_country_setting['display_name']}/{user_country_setting['currency_code']})")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             break
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def manage_favorites():
     while True:
         display_favorites_management_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.25)
+        time.sleep(0.125)
         choice = input("\n> ").strip()
         if choice == '1':
             add_to_favorites()
@@ -232,16 +232,16 @@ def manage_favorites():
             return
         else:
             display_favorites_management_menu()
-            print("\n❗ 잘못된 선택입니다. 1, 2 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
-            time.sleep(0.5)
+            print(f"\n❗ 잘못된 선택입니다. 1, 2 {COMMAND_INVALID}")
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def add_to_favorites():
     while True:
         display_add_favorite_menu(print_favorites_list)
         print("\n즐겨찾기에 추가할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(f"(국가 목록 보기: '{COMMAND_LIST[0]}' 또는 '{COMMAND_LIST[1]}' 입력 | 뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(", ".join(COMMAND_CHOICE))
+        time.sleep(0.125)
         country_input = input("\n> ").strip()
         if country_input.lower() in COMMAND_LIST:
             display_country_info()
@@ -256,16 +256,16 @@ def add_to_favorites():
                 save_favorites()
                 currency_name = CURRENCY_NAMES.get(found_country_info['currency_code'], "알 수 없는 통화")
                 print(f"\n✅ '{found_country_info['display_name']}'({currency_name}/{found_country_info['currency_code']})이(가) 즐겨찾기에 추가되었습니다.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
             else:
                 currency_name = CURRENCY_NAMES.get(found_country_info['currency_code'], "알 수 없는 통화")
                 print(f"\n❗ '{found_country_info['display_name']}'({currency_name}/{found_country_info['currency_code']})은(는) 이미 즐겨찾기에 있습니다.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def remove_from_favorites():
@@ -275,13 +275,13 @@ def remove_from_favorites():
         if not currency_favorites:
             print("\n삭제할 즐겨찾기 통화가 없습니다.")
             print("\n==============================")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             return
         print_favorites_list()
         print("\n삭제할 통화에 해당하는 번호를 입력하세요.")
-        print(f"(뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(f"({COMMAND_CHOICE[1]}")
+        time.sleep(0.125)
         choice = input("\n> ").strip()
         if choice.lower() in COMMAND_BACK:
             return
@@ -293,17 +293,17 @@ def remove_from_favorites():
                 display_delete_favorite_menu(print_favorites_list)
                 currency_name = CURRENCY_NAMES.get(removed_fav['currency_code'], "알 수 없는 통화")
                 print(f"\n✅ '{removed_fav['display_name']}'({currency_name}/{removed_fav['currency_code']})이(가) 즐겨찾기에서 삭제되었습니다.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
             else:
                 display_delete_favorite_menu(print_favorites_list)
                 print("\n❗ 유효하지 않은 번호입니다. 다시 입력해 주세요.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
         except ValueError:
             display_delete_favorite_menu(print_favorites_list)
             print("\n❗ 유효하지 않은 입력입니다. 번호를 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def lookup_single_currency_rate():
@@ -311,7 +311,7 @@ def lookup_single_currency_rate():
     if user_country_setting is None:
         display_exchange_rate_menu()
         print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
-        time.sleep(0.5)
+        time.sleep(0.125)
         input("\n> 확인(Enter)")
         return
 
@@ -321,8 +321,8 @@ def lookup_single_currency_rate():
     while True:
         display_individual_exchange_rate_menu(user_base_currency_name, user_country_setting, user_base_currency)
         print("\n조회할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
-        print(f"(국가 목록 보기: '{COMMAND_LIST[0]}' 또는 '{COMMAND_LIST[1]}' 입력 | 뒤로 가기: '{COMMAND_BACK[0]}' 또는 '{COMMAND_BACK[1]}' 입력)")
-        time.sleep(0.25)
+        print(", ".join(COMMAND_CHOICE))
+        time.sleep(0.125)
         target_country_input = input("\n> ").strip()
         if target_country_input.lower() in COMMAND_LIST:
             clear_terminal()
@@ -339,7 +339,7 @@ def lookup_single_currency_rate():
             target_currency_name = CURRENCY_NAMES.get(target_currency, "알 수 없는 통화")
             if target_currency == user_base_currency:
                 print("\n❗ 동일한 통화는 조회할 수 없습니다.")
-                time.sleep(0.5)
+                time.sleep(0.125)
                 input("\n> 확인(Enter)")
                 continue
             rate_from_target_to_user = get_exchange_rate(target_currency, user_base_currency)
@@ -352,11 +352,11 @@ def lookup_single_currency_rate():
             else:
                 print(f"\n⚠️ '{target_country_display_name}'({target_currency})에서 '{user_country_setting['display_name']}'({user_base_currency})(으)로의 환율 정보를 가져올 수 없습니다. 통화 코드 또는 API 응답을 확인해 주세요.")
             print("\n==============================")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
         else:
             print("\n❌ 해당 국가 또는 통화를 찾을 수 없습니다. 다시 입력해 주세요.")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
 
 def lookup_favorites_exchange_rates():
@@ -364,7 +364,7 @@ def lookup_favorites_exchange_rates():
     if user_country_setting is None:
         display_exchange_rate_menu()
         print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
-        time.sleep(0.5)
+        time.sleep(0.125)
         input("\n> 확인(Enter)")
         return
 
@@ -378,7 +378,7 @@ def lookup_favorites_exchange_rates():
             print(" 즐겨찾기에 등록된 통화가 없습니다.")
             print("'즐겨찾기 관리' 메뉴에서 추가해 주세요.")
             print("\n==============================")
-            time.sleep(0.5)
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
             return
         print(f"기준 통화: {user_base_currency_name}({user_country_setting['display_name']}/{user_base_currency})\n")
@@ -399,7 +399,7 @@ def lookup_favorites_exchange_rates():
                 print(f"⚠️ '{target_country_display_name}'({target_currency}) 환율 정보를 가져올 수 없습니다.")
                 all_rates_fetched = False
         print("\n==============================")
-        time.sleep(0.5)
+        time.sleep(0.125)
         input("\n> 확인(Enter)")
         return
 
@@ -407,7 +407,7 @@ def lookup_exchange_rate():
     while True:
         display_exchange_rate_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
-        time.sleep(0.25)
+        time.sleep(0.125)
         choice = input("\n> ").strip()
         if choice == '1':
             lookup_single_currency_rate()
@@ -421,6 +421,6 @@ def lookup_exchange_rate():
             return
         else:
             display_exchange_rate_menu()
-            print("\n❗ 잘못된 선택입니다. 1 ~ 4 또는 0('back' 또는 '/'도 가능) 중 하나를 입력하세요.")
-            time.sleep(0.5)
+            print(f"\n❗ 잘못된 선택입니다. 1 ~ 4 {COMMAND_INVALID}")
+            time.sleep(0.125)
             input("\n> 확인(Enter)")
