@@ -1,11 +1,10 @@
-import os, json, time
-import requests
+import time
 import fn
 
-from assign import HISTORY_FILE
-from assign import calculator_base_currency_setting, calculator_target_currency_setting
 from assign import COMMAND_LIST, COMMAND_BACK
 from assign import CURRENCY_NAMES
+
+HISTORY_FILE = 'calculation_history.json'
 
 calculator_base_currency_setting = fn.find_country_by_input('미국')
 calculator_target_currency_setting = fn.find_country_by_input('한국')

@@ -1,11 +1,15 @@
 import os, json, time
 import requests
 
-from assign import USER_SETTINGS_FILE, FAVORITES_FILE
-from assign import API_BASE_URL
-from assign import user_country_setting, currency_favorites
 from assign import COMMAND_LIST, COMMAND_BACK
-from assign import COUNTRIES, _OLD_CURRENCY_UNITS_REFERENCE, CURRENCY_UNITS, CURRENCY_NAMES
+from assign import COUNTRIES, CURRENCY_UNITS, CURRENCY_NAMES
+
+USER_SETTINGS_FILE = 'user_settings.json'
+FAVORITES_FILE = 'currency_favorites.json'
+API_BASE_URL = "https://open.er-api.com/v6/latest/"
+
+user_country_setting = None
+currency_favorites = []
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -79,32 +83,32 @@ def save_favorites():
 def display_main_menu():
     clear_terminal()
     print("=== 환율 애플리케이션 메뉴 ===")
-    print("|                            |")
-    print("|  1. 환율 조회              |")
-    print("|  2. 환율 계산기            |")
-    print("|  3. 국가 목록 보기         |")
-    print("|  0. 종료                   |")
-    print("|                            |")
+    print("|                           |")
+    print("|  1. 환율 조회             |")
+    print("|  2. 환율 계산기           |")
+    print("|  3. 국가 목록 보기        |")
+    print("|  0. 종료                  |")
+    print("|                           |")
     print("==============================")
 
 def display_exchange_rate_menu():
     clear_terminal()
     print("====== 실시간 환율 조회 ======")
-    print("|                            |")
-    print("|  1. 직접 검색하여 조회     |")
-    print("|  2. 즐겨찾기 통화 조회     |")
-    print("|  3. 즐겨찾기 관리          |")
-    print("|  4. 사용자 통화 설정       |")
-    print("|  0. 뒤로 가기              |")
-    print("|                            |")
+    print("|                           |")
+    print("|  1. 직접 검색하여 조회    |")
+    print("|  2. 즐겨찾기 통화 조회    |")
+    print("|  3. 즐겨찾기 관리         |")
+    print("|  4. 사용자 통화 설정      |")
+    print("|  0. 뒤로 가기             |")
+    print("|                           |")
     print("==============================")
 
 def display_break():
     clear_terminal()
     print("=== 환율 애플리케이션 종료 ===")
-    print("|                            |")
+    print("|                           |")
     print("| 애플리케이션을 종료합니다. |")
-    print("|                            |")
+    print("|                           |")
     print("==============================")
 
 def display_currency_setting_menu(title, current_setting):
@@ -126,11 +130,11 @@ def display_individual_exchange_rate_menu(user_base_currency_name, user_country_
 def display_favorites_management_menu():
     clear_terminal()
     print("======= 즐겨찾기  관리 =======")
-    print("|                            |")
-    print("|  1. 즐겨찾기 추가          |")
-    print("|  2. 즐겨찾기 삭제          |")
-    print("|  0. 뒤로 가기              |")
-    print("|                            |")
+    print("|                           |")
+    print("|  1. 즐겨찾기 추가         |")
+    print("|  2. 즐겨찾기 삭제         |")
+    print("|  0. 뒤로 가기             |")
+    print("|                           |")
     print("==============================")
 
 def display_add_favorite_menu(print_favorites_list_func):
@@ -302,7 +306,18 @@ def remove_from_favorites():
             time.sleep(0.5)
             input("\n> 확인(Enter)")
 
-def lookup_single_currency_rate(user_base_currency, user_base_currency_name):
+def lookup_single_currency_rate():
+    global user_country_setting
+    if user_country_setting is None:
+        display_exchange_rate_menu()
+        print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
+        time.sleep(0.5)
+        input("\n> 확인(Enter)")
+        return
+
+    user_base_currency = user_country_setting['currency_code']
+    user_base_currency_name = CURRENCY_NAMES.get(user_base_currency, "알 수 없는 통화")
+
     while True:
         display_individual_exchange_rate_menu(user_base_currency_name, user_country_setting, user_base_currency)
         print("\n조회할 발행 국가 이름, 유통 지역 또는 통화 코드를 입력하세요.")
@@ -344,7 +359,18 @@ def lookup_single_currency_rate(user_base_currency, user_base_currency_name):
             time.sleep(0.5)
             input("\n> 확인(Enter)")
 
-def lookup_favorites_exchange_rates(user_base_currency, user_base_currency_name):
+def lookup_favorites_exchange_rates():
+    global user_country_setting
+    if user_country_setting is None:
+        display_exchange_rate_menu()
+        print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
+        time.sleep(0.5)
+        input("\n> 확인(Enter)")
+        return
+
+    user_base_currency = user_country_setting['currency_code']
+    user_base_currency_name = CURRENCY_NAMES.get(user_base_currency, "알 수 없는 통화")
+
     while True:
         clear_terminal()
         print("===== 즐겨찾기 환율 조회 =====\n")
@@ -378,23 +404,15 @@ def lookup_favorites_exchange_rates(user_base_currency, user_base_currency_name)
         return
 
 def lookup_exchange_rate():
-    if user_country_setting is None:
-        display_main_menu()
-        print("\n❗ 사용자 통화를 먼저 설정해 주세요.")
-        time.sleep(0.5)
-        input("\n> 확인(Enter)")
-        return
-    user_base_currency = user_country_setting['currency_code']
-    user_base_currency_name = CURRENCY_NAMES.get(user_base_currency, "알 수 없는 통화")
     while True:
         display_exchange_rate_menu()
         print("\n메뉴를 선택하세요.(번호 입력)")
         time.sleep(0.25)
         choice = input("\n> ").strip()
         if choice == '1':
-            lookup_single_currency_rate(user_base_currency, user_base_currency_name)
+            lookup_single_currency_rate()
         elif choice == '2':
-            lookup_favorites_exchange_rates(user_base_currency, user_base_currency_name)
+            lookup_favorites_exchange_rates()
         elif choice == '3':
             manage_favorites()
         elif choice == '4':

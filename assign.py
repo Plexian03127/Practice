@@ -1,15 +1,3 @@
-USER_SETTINGS_FILE = 'user_settings.json'
-FAVORITES_FILE = 'currency_favorites.json'
-HISTORY_FILE = 'calculation_history.json'
-
-API_BASE_URL = "https://open.er-api.com/v6/latest/"
-
-user_country_setting = None
-currency_favorites = []
-
-calculator_base_currency_setting = None
-calculator_target_currency_setting = None
-
 COMMAND_LIST = ['list', '?']
 COMMAND_BACK = ['back', '/']
 
