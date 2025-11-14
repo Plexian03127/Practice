@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header>
+  <div class="container">
+    {% include 'partials/_search_form.html' %}
+  </div>
+</header>
+
+<div class="container search-results">
+    <h2>"{{ query }}" 검색 결과</h2>
+    
+    {% if results %}
+        {% for result in results %}
+        <div class="result-item">
+            <h3><a href="{{ result.url }}" target="_blank">{{ result.title }}</a></h3>
+            <p class="snippet">{{ result.snippet }}</p>
+            <p class="url">{{ result.url }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>검색 결과가 없습니다.</p>
+    {% endif %}
+</div>
+{% endblock %}

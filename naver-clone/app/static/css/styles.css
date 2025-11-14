@@ -1,0 +1,295 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    padding-left: 20px;   /* 전체 최소 여백 */
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: transparent; /* 전체 너비 파란색 제거, 내부 컨테이너에 색상 적용 */
+    color: #ffffff;
+    padding: 12px 0;
+    text-align: center;
+}
+
+/* header 내부 컨테이너를 검색 결과와 동일한 폭으로 만들고 파란 배경 적용 */
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #0072c6;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+h1 {
+    margin: 0;
+}
+
+.container, .search-results {
+    max-width: 1100px;    /* 콘텐츠 최대 폭(원하면 조정) */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;   /* 내부 여백 */
+    padding-right: 24px;
+    width: 100%;
+}
+
+.search-form {
+    width: 100%;
+    /* max-width: 1100px;  기존 제한 제거 */
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 12px 0;
+}
+
+/* 검색 결과 페이지의 상단 검색창을 첫 화면(헤더) 검색창과 동일하게 보이도록 조정 */
+.search-results .search-form {
+    max-width: 1100px;
+    margin: 16px auto;
+    padding: 12px 20px;
+    background: #0072c6;        /* 파란 배경(헤더와 동일) */
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 검색창 내부 텍스트 입력 스타일 (헤더와 동일한 흰색 입력 필드) */
+.search-results .search-form input[type="text"] {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #222;
+}
+
+/* 버튼 스타일(헤더과 동일) */
+.search-results .search-form input[type="submit"],
+.search-results .search-form button.search-btn {
+    padding: 10px 18px;
+    background: #005fa3;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-results .search-form input[type="submit"]:hover,
+.search-results .search-form button.search-btn:hover {
+    background: #00497a;
+}
+
+/* 텍스트 입력은 가변 폭으로 버튼을 제외한 나머지 차지 */
+input[type="text"] {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: auto; /* 기존 width:70% 제거 */
+}
+
+/* 제출 버튼 고정 폭 유지 */
+input[type="submit"], button.search-btn {
+    padding: 10px 18px;
+    background: #005fa3;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* hover 색상 */
+input[type="submit"]:hover, button.search-btn:hover {
+    background: #00497a;
+}
+
+.results {
+    margin-top: 20px;
+}
+
+.result-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+    background: #ffffff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.result-item h2 {
+    margin: 0;
+}
+
+.result-item h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.1rem;
+}
+
+.result-item .snippet {
+    color: #444;
+    margin: 6px 0;
+}
+
+/* 반응형 보정: 작은 화면에서는 패딩 축소 */
+@media (max-width: 600px) {
+    .container, .search-results, header .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* 공통: 검색 박스(헤더, 검색결과)용 공통 스타일 */
+.blue-search-box {
+    max-width: 1100px;
+    margin: 16px auto;
+    padding: 12px 24px;
+    background: #0072c6;
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 루트 페이지: header 내부 컨테이너는 이미 blue-search-box 역할 */
+header .container {
+    /* ...existing header .container rules... */
+    /* 동일 클래스 이름사용을 권장하므로 스타일은 중복 허용 */
+}
+
+/* 검색 결과 페이지 상단 검색창을 루트와 동일하게 보이도록 적용 */
+.search-results > .search-form,
+.search-results .search-form {
+    /* .search-form에 바로 적용하지 않고 blue-search-box 규칙을 재사용 */
+    /* 기존 .search-results .search-form 블록을 아래로 대체하세요 */
+}
+
+/* 실제 적용: .search-results 내부의 form에 blue-search-box 스타일 적용 */
+.search-results .search-form {
+    /* blue-search-box와 동일하게 설정 */
+    max-width: 1100px;
+    margin: 16px auto;
+    padding: 12px 24px;
+    background: #0072c6;
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 입력, 버튼을 루트 검색창과 동일하게 맞춤 */
+.search-results .search-form input[type="text"],
+header .container .search-form input[type="text"],
+.search-form input[type="text"] {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #222;
+    box-sizing: border-box;
+}
+
+.search-results .search-form input[type="submit"],
+header .container .search-form input[type="submit"],
+.search-form input[type="submit"],
+.search-results .search-form button.search-btn,
+header .container .search-form button.search-btn,
+.search-form button.search-btn {
+    padding: 10px 18px;
+    background: #005fa3;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-results .search-form input[type="submit"]:hover,
+.search-results .search-form button.search-btn:hover,
+header .container .search-form input[type="submit"]:hover,
+header .container .search-form button.search-btn:hover {
+    background: #00497a;
+}
+
+/* 화면 너비가 작을 때 여백/패딩 보정 */
+@media (max-width: 600px) {
+    .search-results .search-form,
+    header .container {
+        padding-left: 12px;
+        padding-right: 12px;
+        margin: 12px;
+    }
+}
+
+/* 인덱스 초반(영웅 영역) 중앙 정렬 및 글자 확대 */
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* 수평 중앙 정렬 */
+    justify-content: center;  /* 수직 중앙 정렬 */
+    text-align: center;
+    min-height: calc(70vh);   /* 화면 높이 비율로 중앙에 위치 */
+    gap: 18px;
+    box-sizing: border-box;
+    padding: 24px;
+}
+
+/* "환영합니다!" 글자 크기 크게 (기존 대비 약 4배 효과) */
+.hero h1 {
+    margin: 0;
+    font-size: 4rem;          /* 필요하면 숫자 조정 (예: 3.5rem / 5rem) */
+    line-height: 1;
+    color: #222;
+}
+
+/* 보조 문구 크기 */
+.hero .subtitle {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+/* 검색창을 hero 영역 내에서 적절히 배치 */
+.hero .hero-search {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 18px;
+}
+
+/* 페이지 전체 레이아웃: footer를 하단으로 고정시키기 위한 설정 */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* 기존 body 스타일이 있으면 병합하세요 */
+}
+
+main {
+    flex: 1; /* main이 가능한 공간을 차지하도록 하여 footer가 아래로 내려가게 함 */
+}
+
+/* footer 스타일 조정 (위치 아래로, 중앙 정렬) */
+.site-footer {
+    margin-top: 40px;
+    padding: 20px 0;
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+}

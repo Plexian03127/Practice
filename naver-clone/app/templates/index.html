@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>환영합니다!</h1>
+    <p class="subtitle">원하는 내용을 검색해 보세요.</p>
+
+    <!-- 기존 검색 폼을 그대로 쓰려면 include 유지 -->
+    <div class="hero-search">
+        {% include 'partials/_search_form.html' %}
+    </div>
+</div>
+{% endblock %}

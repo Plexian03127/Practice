@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}검색 사이트{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- header 제거: 각 템플릿에서 필요 시 {% include 'partials/_search_form.html' %} 를 사용 -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <!-- 변경: footer 텍스트와 클래스 추가 -->
+    <footer class="site-footer">
+        김동혁의 검색 사이트
+    </footer>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
